@@ -12,9 +12,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #3FB950; --bg: #0A0A0E; --panel: rgba(17,17,24,0.9); --line: #1B1B23; --border: #26262F; --text: #ECECF1; --muted: #9A9AA8; --dim: #55555F; --green: #3FB950; }
+  :root { --accent: #3FB950; --bg: #0A0A0E; --panel: rgba(17,17,24,0.9); --line: #1B1B23; --border: #26262F; --text: #ECECF1; --muted: #9A9AA8; --dim: #7E7E8C; --green: #3FB950; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
+  body { overflow-x: hidden; }
   body {
     background: var(--bg); color: var(--text);
     font-family: Manrope, Helvetica, sans-serif;
@@ -33,7 +34,7 @@
   .brand { display: flex; align-items: center; gap: 12px; color: var(--text); }
   .brand img { height: 34px; width: auto; display: block; }
   .brand span { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.14em; }
-  .nav-tele { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--dim); }
+  .nav-tele { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #8B8B98; }
   .nav-links { display: flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.08em; }
   .nav-links a { color: #B8B8C4; padding: 8px 14px; border-radius: 8px; transition: background 0.15s, color 0.15s; }
   .nav-links a:hover { color: #fff; background: #17171F; }
@@ -41,12 +42,20 @@
   .nav-links a.cta:hover { filter: brightness(1.15); }
 
   /* HERO */
-  .hero { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: 72px; padding: 96px 56px 150px; align-items: center; }
-  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 620px 400px at 22% 35%, rgba(63,185,80,0.12), transparent 70%); pointer-events: none; }
+  .hero-outer { position: relative; padding: 72px 56px 150px; }
+  .hero-outer::before { content: ''; position: absolute; inset: -220px -160px; background: radial-gradient(ellipse 620px 400px at calc(22% + 40px) 45%, rgba(63,185,80,0.12), transparent 70%); pointer-events: none; }
+  .hero-outer > .label { position: relative; margin-bottom: 44px; }
+  .hero { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: 72px; align-items: center; }
   .hero > div { position: relative; }
   .label { display: flex; align-items: center; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.16em; color: #8B8B98; }
   .label::before { content: ''; width: 40px; height: 1px; background: var(--accent); }
-  h1 { margin: 26px 0 0; font-family: 'Pixelify Sans', monospace; font-weight: 700; font-size: 96px; line-height: 0.94; color: #F2F2F7; }
+  #mode-word { display: inline-block; position: relative; overflow: hidden; color: var(--accent); vertical-align: bottom; }
+  #mode-word .w { display: inline-block; }
+  #mode-word .w.enter { animation: wordIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both; }
+  #mode-word .w.leave { position: absolute; left: 0; top: 0; animation: wordOut 0.55s cubic-bezier(0.55, 0, 0.55, 0.2) both; }
+  @keyframes wordIn { from { transform: translateY(-115%); } to { transform: none; } }
+  @keyframes wordOut { from { transform: none; opacity: 1; } to { transform: translateY(115%); opacity: 0; } }
+  h1 { margin: 0; font-family: 'Pixelify Sans', monospace; font-weight: 700; font-size: 96px; line-height: 0.94; color: #F2F2F7; }
   h1 em { font-style: normal; color: var(--accent); }
   .hero p { margin: 24px 0 0; font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 460px; }
   .ip-row { margin-top: 40px; display: flex; align-items: center; gap: 16px; }
@@ -55,7 +64,7 @@
   .ip-chip button { border: none; cursor: pointer; background: var(--accent); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; padding: 12px 18px; border-radius: 3px; transition: filter 0.15s; }
   .ip-chip button:hover { filter: brightness(1.15); }
   .ip-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); letter-spacing: 0.08em; }
-  #ascii { position: absolute; left: 56px; bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.75; letter-spacing: 0.04em; color: #3C3C49; white-space: pre; pointer-events: none; opacity: 1; transition: opacity 1.2s ease; }
+  #ascii { position: absolute; left: 56px; bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.75; letter-spacing: 0.04em; color: #6E6E7C; white-space: pre; pointer-events: none; opacity: 1; transition: opacity 1.2s ease; }
   #ascii .fade { display: block; opacity: 0; transition: opacity 0.45s ease; }
 
   /* HUD card */
@@ -88,7 +97,7 @@
   section { padding: 80px 56px; border-top: 1px solid var(--line); }
   h2 { margin: 16px 0 0; font-family: Unbounded, sans-serif; font-weight: 600; font-size: 30px; letter-spacing: 0.01em; color: #F2F2F7; }
   .sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; flex-wrap: wrap; }
-  .sec-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--dim); }
+  .sec-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: #8B8B98; }
 
   /* GALLERY */
   .gallery { margin-top: 36px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 18px; }
@@ -120,7 +129,7 @@
   .step code { font-family: 'JetBrains Mono', monospace; color: #F2F2F7; }
 
   /* FOOTER */
-  footer { padding: 26px 56px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
+  footer { padding: 26px 56px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #8B8B98; }
   footer .links { display: flex; gap: 28px; }
   footer a { color: var(--muted); transition: color 0.15s; }
   footer a:hover { color: var(--text); }
@@ -128,7 +137,8 @@
   @media (max-width: 960px) {
     .nav-in { padding: 16px 20px; }
     .nav-tele { display: none; }
-    .hero { grid-template-columns: 1fr; gap: 48px; padding: 64px 20px 130px; }
+    .hero-outer { padding: 48px 20px 130px; }
+    .hero { grid-template-columns: 1fr; gap: 48px; }
     h1 { font-size: 64px; }
     #ascii { left: 20px; }
     section { padding: 56px 20px; }
@@ -153,14 +163,15 @@
   <div class="nav-links">
     <a href="status.html">[ STATUS ]</a>
     <a href="https://wiki.pointpixel.ru" target="_blank" rel="noopener">[ WIKI ]</a>
-    <a href="https://shop.pointpixel.ru" target="_blank" rel="noopener">[ SHOP ]</a>
-    <a class="cta" href="https://discord.gg/VjtjduYsgX" target="_blank" rel="noopener">[ DISCORD ]</a>
+    <a href="https://discord.gg/VjtjduYsgX" target="_blank" rel="noopener">[ DISCORD ]</a>
+    <a class="cta" href="https://shop.pointpixel.ru" target="_blank" rel="noopener">[ SHOP ]</a>
   </div>
 </div></nav>
 
-<header class="wrap hero">
-  <div>
-    <div class="label">MODE://VANILLA_SURVIVAL</div>
+<header class="hero-outer">
+  <div class="label" data-om-label="animated_text"><span>MODE://<span id="mode-word"></span></span></div>
+  <div class="wrap hero">
+  <div data-om-label="hIpoinpixel">
     <h1>POINT<br><em>PIXEL</em></h1>
     <p>Выживание без pay-to-win. Защита построек, живое комьюнити и мир, который растёт вместе с игроками.</p>
     <div class="ip-row">
@@ -172,7 +183,7 @@
     </div>
   </div>
 
-  <div class="hud">
+  <div class="hud" style="width: 413px; height: 359px;">
     <i></i><i></i><i></i><i></i>
     <div class="hud-head">
       <span class="l">STAT://ОНЛАЙН_ЗА_7_ДНЕЙ</span>
@@ -182,6 +193,7 @@
     <div class="chart" id="chart"></div>
     <div class="chart-days" id="chart-days"></div>
     <div class="hud-foot"><span class="l">MAX://НЕДЕЛЯ</span><span id="peak">—</span></div>
+  </div>
   </div>
 
   <div id="ascii"></div>
@@ -208,20 +220,22 @@
   </div>
 </div></section>
 
-<section><div class="wrap" style="padding: 0;">
+<section>
   <div class="label">SYS://О_СЕРВЕРЕ</div>
+  <div class="wrap" style="padding: 0;">
   <h2>Почему PointPixel</h2>
   <div class="rows">
-    <div class="row"><span class="idx">[01]</span><span class="t">Чистая ванила 1.21</span><span class="d">Классическое выживание на последней версии — без модов но с интересными механиками.</span></div>
-    <div class="row"><span class="idx">[02]</span><span class="t">Без pay-to-win</span><span class="d">В магазине только косметика и привилегии, не ломающие баланс.</span></div>
-    <div class="row"><span class="idx">[03]</span><span class="t">Защита от гриферов</span><span class="d">Активная модерация и откат гриферства — постройки в безопасности.</span></div>
-    <div class="row"><span class="idx">[04]</span><span class="t">Живое комьюнити</span><span class="d">Активный Discord, совместные постройки и движ на сервере — скучать не придётся.</span></div>
+    <div class="row"><span class="idx">[01]</span><span class="t">Чистая ванила 1.21</span><span class="d">Классическое выживание — без модов но с интересными механиками.<br></span></div>
+    <div class="row"><span class="idx">[02]</span><span class="t">Без pay-to-win</span><span class="d">В магазине только косметика и привилегии, нечего более.</span></div>
+    <div class="row"><span class="idx">[03]</span><span class="t">Защита от гриферов</span><span class="d">Только комфортная игра в этом помогают активная модерация и откат гриферства.</span></div>
+    <div class="row"><span class="idx">[04]</span><span class="t">Никакого Single Play</span><span class="d">Здесь активные игроки. Развивайтесь с ними, делайте совместные проекты. Скучать не придётся, но и в одиночку тоже можно :з</span></div>
   </div>
 </div></section>
 
-<section><div class="wrap join" style="padding: 0;">
+<section>
+  <div class="label">NET://ПОДКЛЮЧЕНИЕ</div>
+  <div class="wrap join" style="padding: 0;">
   <div>
-    <div class="label">NET://ПОДКЛЮЧЕНИЕ</div>
     <h2>Как зайти</h2>
     <p>Нужна Java Edition версии 1.21 и выше.</p>
   </div>
@@ -245,6 +259,30 @@
 <script>
 // ============ год в футере ============
 document.getElementById('year').textContent = new Date().getFullYear();
+
+// ============ MODE:// — новое слово выходит сверху, вытесняя старое вниз ============
+(function () {
+  var WORDS = ['PIXEL_SURVIVAL', 'PIXEL_CREATIVE', 'PIXEL_MODS', 'PIXEL_FUN'];
+  var HOLD = 3200;   // сколько слово стоит на месте, мс
+  var el = document.getElementById('mode-word');
+  var idx = 0;
+
+  var cur = document.createElement('span');
+  cur.className = 'w';
+  cur.textContent = WORDS[0];
+  el.appendChild(cur);
+
+  setInterval(function () {
+    idx = (idx + 1) % WORDS.length;
+    var old = cur;
+    old.className = 'w leave';                 // старое уезжает вниз
+    cur = document.createElement('span');
+    cur.className = 'w enter';                 // новое заезжает сверху одновременно
+    cur.textContent = WORDS[idx];
+    el.appendChild(cur);
+    setTimeout(function () { old.remove(); }, 600);
+  }, HOLD);
+})();
 
 // ============ кнопка «копировать IP» ============
 var copyBtn = document.getElementById('copy-btn');

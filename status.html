@@ -59,7 +59,7 @@
   .legend b { width: 10px; height: 10px; display: inline-block; }
 
   .howto { margin-top: 56px; border: 1px dashed #2A2A36; padding: 22px 26px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; color: #6E6E7C; }
-  .howto em { font-style: normal; color: #1370C4; }
+  .howto em { font-style: normal; color: var(--accent); }
   .howto code { color: var(--muted); }
 
   footer { padding: 26px 56px; border-top: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
@@ -111,8 +111,8 @@
   </div>
 
   <div class="howto" id="howto">
-    <em>SYS://LIVE</em> shop.pointpixel.ru <code>НЕ РАБОТАЕТ</code>.<br>
-    Причина отсутсвия готового варианта сайта.
+    <em>SYS://LIVE</em> — данные обновляет <code>monitor.php</code>: cron раз в 15 минут проверяет сервисы и пишет <code>status.json</code>, страница подхватывает его сама.<br>
+    Пока файла нет — показываются демо-данные. Список сервисов правится в массиве <code>$SERVICES</code> в начале <code>monitor.php</code>.
   </div>
 </main>
 
@@ -132,10 +132,10 @@
 // (cron, см. README.txt). Пока файла нет — демо-данные ниже.
 // ================================================================
 var DEMO = [
-  { name: 'Proxy',    host: 'play.pointpixel.ru',             status: 'ok',     uptime: '99.23',  down: [],   degraded: [89] },
-  { name: 'Survival', host: 'survival.pointpixel.ru:25661',   status: 'ok',     uptime: '97.86',  down: [],   degraded: [89] },
-  { name: 'Hub',      host: 'hub.pointpixel.ru:25584',        status: 'ok',     uptime: '97.40',  down: [],   degraded: [89] },
-  { name: 'Магазин',  host: 'shop.pointpixel.ru',             status: 'null',   uptime: '0',      down: [89], degraded: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88] },
+  { name: 'Survival', host: 'play.pointpixel.ru:25565', status: 'ok', uptime: '99.97', down: [],   degraded: [61] },
+  { name: 'Wiki',     host: 'wiki.pointpixel.ru',       status: 'ok', uptime: '99.90', down: [34], degraded: [35] },
+  { name: 'Магазин',  host: 'shop.pointpixel.ru',       status: 'ok', uptime: '99.95', down: [],   degraded: [12, 70] },
+  { name: 'Discord',  host: 'discord.gg/VjtjduYsgX',    status: 'ok', uptime: '99.80', down: [55], degraded: [54, 56] },
 ];
 
 var META = {

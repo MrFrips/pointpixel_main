@@ -1,4 +1,8 @@
 <?php
+// показывать ошибки вместо пустого HTTP 500 — так видно, что сломалось
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 // ================================================================
 // PointPixel — единый cron-скрипт мониторинга. Делает две вещи:
 //
@@ -23,10 +27,10 @@ $SLOW_MS   = 4000;                     // ответ дольше — счита
 // Сервисы для мониторинга. type: 'mc' — сам игровой сервер,
 // 'http' — любой сайт/API (ok = ответ 2xx/3xx быстрее $SLOW_MS).
 $SERVICES = [
-    ['id' => 'proxy', 'name' => 'Прокси', 'host' => 'play.pointpixel.ru', 'type' => 'mc'],
-    ['id' => 'survival', 'name' => 'Выживание',     'host' => 'wiki.pointpixel.ru',=> 'mc'],
-    ['id' => 'creative', 'name' => 'Креатив',  'host' => 'shop.pointpixel.ru',=> 'mc'],
-    ['id' => 'shop',  'name' => 'Магазин',  'host' => 'hop.pointpixel.ru', 'type' => 'http', 'url' => 'https://shop.pointpixel.ru'],
+    ['id' => 'survival', 'name' => 'Survival', 'host' => 'play.pointpixel.ru:25565', 'type' => 'mc'],
+    ['id' => 'wiki',     'name' => 'Wiki',     'host' => 'wiki.pointpixel.ru',       'type' => 'http', 'url' => 'https://wiki.pointpixel.ru'],
+    ['id' => 'shop',     'name' => 'Магазин',  'host' => 'shop.pointpixel.ru',       'type' => 'http', 'url' => 'https://shop.pointpixel.ru'],
+    ['id' => 'discord',  'name' => 'Discord',  'host' => 'discord.gg/VjtjduYsgX',    'type' => 'http', 'url' => 'https://discord.com/api/v10/invites/VjtjduYsgX'],
 ];
 
 $DIR         = __DIR__;
@@ -44,10 +48,38 @@ if (php_sapi_name() !== 'cli') {
     header('Content-Type: text/plain; charset=utf-8');
 }
 
+// запрос с поддержкой хостингов, где выключен allow_url_fopen (тогда — через cURL)
+function http_get($url, $timeout) {
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_MAXREDIRS      => 5,
+            CURLOPT_TIMEOUT        => $timeout,
+            CURLOPT_USERAGENT      => 'PointPixel-Monitor',
+            CURLOPT_SSL_VERIFYPEER => false,
+        ]);
+        $body = curl_exec($ch);
+        $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return ['body' => $body === false ? false : $body, 'code' => $code];
+    }
+    if (!ini_get('allow_url_fopen')) return ['body' => false, 'code' => 0];
+    $ctx = stream_context_create(['http' => ['timeout' => $timeout, 'ignore_errors' => true, 'user_agent' => 'PointPixel-Monitor']]);
+    $body = @file_get_contents($url, false, $ctx);
+    $code = 0;
+    if (isset($http_response_header)) {
+        foreach ($http_response_header as $h) {
+            if (preg_match('#^HTTP/\S+\s+(\d{3})#', $h, $m)) $code = (int)$m[1];
+        }
+    }
+    return ['body' => $body, 'code' => $code];
+}
+
 function fetch_json($url) {
-    $ctx = stream_context_create(['http' => ['timeout' => 8, 'user_agent' => 'PointPixel-Monitor']]);
-    $raw = @file_get_contents($url, false, $ctx);
-    return $raw ? json_decode($raw, true) : null;
+    $r = http_get($url, 8);
+    return ($r['body'] !== false && $r['body'] !== '') ? json_decode($r['body'], true) : null;
 }
 
 function load_json($file) {
@@ -57,20 +89,19 @@ function load_json($file) {
 
 // ok / degraded / down по HTTP-ответу и времени
 function http_check($url, $slow_ms) {
-    $t0  = microtime(true);
-    $ctx = stream_context_create(['http' => ['timeout' => 10, 'ignore_errors' => true, 'user_agent' => 'PointPixel-Monitor']]);
-    $raw = @file_get_contents($url, false, $ctx);
-    $ms  = (microtime(true) - $t0) * 1000;
-    $code = 0;
-    if (isset($http_response_header)) {
-        foreach ($http_response_header as $h) {
-            if (preg_match('#^HTTP/\S+\s+(\d{3})#', $h, $m)) $code = (int)$m[1];
-        }
-    }
-    if ($raw === false || $code === 0 || $code >= 500) return 'down';
-    if ($code >= 400) return 'degraded';           // отвечает, но с ошибкой
+    $t0 = microtime(true);
+    $r  = http_get($url, 10);
+    $ms = (microtime(true) - $t0) * 1000;
+    if ($r['body'] === false || $r['code'] === 0 || $r['code'] >= 500) return 'down';
+    if ($r['code'] >= 400) return 'degraded';      // отвечает, но с ошибкой
     return $ms > $slow_ms ? 'degraded' : 'ok';
 }
+
+// проверка, что вообще можем писать файлы рядом со скриптом
+if (@file_put_contents($DIR . '/.write_test', 'ok') === false) {
+    exit("ОШИБКА: нет прав на запись в каталог $DIR — выстави права в файловом менеджере ispmanager\n");
+}
+@unlink($DIR . '/.write_test');
 
 $today = date('Y-m-d');
 
