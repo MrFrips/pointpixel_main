@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PointPixel — Minecraft сервер · play.pointpixel.ru</title>
+<meta name="description" content="PointPixel — ванильное выживание в Minecraft без pay-to-win. IP: play.pointpixel.ru">
+<meta property="og:title" content="PointPixel — Minecraft сервер">
+<meta property="og:description" content="Ванильное выживание без pay-to-win · play.pointpixel.ru">
+<link rel="icon" href="assets/pointpixel-logo.gif">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --accent: #3FB950; --bg: #0A0A0E; --panel: rgba(17,17,24,0.9); --line: #1B1B23; --border: #26262F; --text: #ECECF1; --muted: #9A9AA8; --dim: #55555F; --green: #3FB950; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: Manrope, Helvetica, sans-serif;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 72px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.018) 0px, rgba(255,255,255,0.018) 1px, transparent 1px, transparent 72px);
+  }
+  ::selection { background: rgba(63,185,80,0.4); }
+  a { text-decoration: none; }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+  .wrap { max-width: 1360px; margin: 0 auto; }
+
+  /* NAV */
+  nav { border-bottom: 1px solid var(--line); }
+  .nav-in { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 56px; }
+  .brand { display: flex; align-items: center; gap: 12px; color: var(--text); }
+  .brand img { height: 34px; width: auto; display: block; }
+  .brand span { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.14em; }
+  .nav-tele { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--dim); }
+  .nav-links { display: flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.08em; }
+  .nav-links a { color: #B8B8C4; padding: 8px 14px; border-radius: 8px; transition: background 0.15s, color 0.15s; }
+  .nav-links a:hover { color: #fff; background: #17171F; }
+  .nav-links a.cta { color: #fff; background: var(--accent); }
+  .nav-links a.cta:hover { filter: brightness(1.15); }
+
+  /* HERO */
+  .hero { position: relative; display: grid; grid-template-columns: 1.15fr 1fr; gap: 72px; padding: 96px 56px 150px; align-items: center; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 620px 400px at 22% 35%, rgba(63,185,80,0.12), transparent 70%); pointer-events: none; }
+  .hero > div { position: relative; }
+  .label { display: flex; align-items: center; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.16em; color: #8B8B98; }
+  .label::before { content: ''; width: 40px; height: 1px; background: var(--accent); }
+  h1 { margin: 26px 0 0; font-family: 'Pixelify Sans', monospace; font-weight: 700; font-size: 96px; line-height: 0.94; color: #F2F2F7; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .hero p { margin: 24px 0 0; font-size: 17px; line-height: 1.7; color: var(--muted); max-width: 460px; }
+  .ip-row { margin-top: 40px; display: flex; align-items: center; gap: 16px; }
+  .ip-chip { display: flex; align-items: center; gap: 12px; background: rgba(21,21,28,0.85); border: 1px solid #2A2A36; border-radius: 4px; padding: 8px 8px 8px 18px; }
+  .ip-chip code { font-family: 'JetBrains Mono', monospace; font-size: 17px; color: var(--text); }
+  .ip-chip button { border: none; cursor: pointer; background: var(--accent); color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; padding: 12px 18px; border-radius: 3px; transition: filter 0.15s; }
+  .ip-chip button:hover { filter: brightness(1.15); }
+  .ip-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); letter-spacing: 0.08em; }
+  #ascii { position: absolute; left: 56px; bottom: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.75; letter-spacing: 0.04em; color: #3C3C49; white-space: pre; pointer-events: none; opacity: 1; transition: opacity 1.2s ease; }
+  #ascii .fade { display: block; opacity: 0; transition: opacity 0.45s ease; }
+
+  /* HUD card */
+  .hud { background: var(--panel); border: 1px solid var(--border); padding: 30px; position: relative; }
+  .hud > i { position: absolute; width: 18px; height: 18px; }
+  .hud > i:nth-child(1) { top: -1px; left: -1px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .hud > i:nth-child(2) { top: -1px; right: -1px; border-top: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .hud > i:nth-child(3) { bottom: -1px; left: -1px; border-bottom: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+  .hud > i:nth-child(4) { bottom: -1px; right: -1px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+  .hud-head { display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.14em; }
+  .hud-head .l { color: #6E6E7C; }
+  #live-badge { color: var(--green); display: inline-flex; align-items: center; gap: 8px; }
+  #live-badge.off { color: #F85149; }
+  #live-badge.wait { color: var(--dim); }
+  #live-badge .dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex: none; }
+  #live-badge .dot::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: currentColor; animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite; }
+  #live-badge.off .dot::after, #live-badge.wait .dot::after { animation: none; }
+  @keyframes ping { 0% { transform: scale(1); opacity: 0.8; } 80%, 100% { transform: scale(3.2); opacity: 0; } }
+  .hud-num { margin-top: 20px; display: flex; align-items: baseline; gap: 12px; }
+  .hud-num b { font-family: Unbounded, sans-serif; font-size: 46px; font-weight: 700; line-height: 1.1; color: #F2F2F7; }
+  .hud-num span { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+  .chart { margin-top: 28px; display: flex; align-items: flex-end; gap: 8px; height: 120px; border-bottom: 1px solid var(--border); }
+  .chart span { flex: 1; background: var(--accent); }
+  .chart-days { display: flex; gap: 8px; margin-top: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); text-align: center; text-transform: uppercase; }
+  .chart-days span { flex: 1; }
+  .hud-foot { margin-top: 22px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.06em; }
+  .hud-foot .l { color: var(--dim); }
+
+  /* SECTIONS */
+  section { padding: 80px 56px; border-top: 1px solid var(--line); }
+  h2 { margin: 16px 0 0; font-family: Unbounded, sans-serif; font-weight: 600; font-size: 30px; letter-spacing: 0.01em; color: #F2F2F7; }
+  .sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  .sec-note { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--dim); }
+
+  /* GALLERY */
+  .gallery { margin-top: 36px; display: grid; grid-template-columns: 1.55fr 1fr; gap: 18px; }
+  .g-cell { display: flex; flex-direction: column; gap: 10px; }
+  .g-cell.big { grid-row: span 2; }
+  .g-cell figure { margin: 0; border: 1px solid #2A2A36; background: var(--panel); overflow: hidden; }
+  .g-cell.big figure { height: 496px; }
+  .g-cell figure { height: 227px; }
+  .g-cell.big figure { height: 496px; }
+  .g-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .g-cell .empty { height: 100%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #4A4A56; background: repeating-linear-gradient(45deg, transparent 0 14px, rgba(255,255,255,0.02) 14px 28px); }
+  .g-cell figcaption, .g-cap { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #6E6E7C; }
+
+  /* FEATURES */
+  .rows { margin-top: 36px; display: flex; flex-direction: column; }
+  .row { display: grid; grid-template-columns: 70px 300px 1fr; gap: 24px; align-items: baseline; padding: 24px 0; border-top: 1px solid var(--line); }
+  .row:last-child { border-bottom: 1px solid var(--line); }
+  .row .idx { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); }
+  .row .t { font-size: 19px; font-weight: 700; color: var(--text); }
+  .row .d { font-size: 15px; line-height: 1.6; color: var(--muted); }
+
+  /* JOIN */
+  .join { display: grid; grid-template-columns: 360px 1fr; gap: 64px; }
+  .join p { margin: 16px 0 0; font-size: 15px; line-height: 1.65; color: var(--muted); }
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; gap: 20px; align-items: center; background: var(--panel); border: 1px solid #23232D; padding: 20px 24px; }
+  .step .idx { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--accent); min-width: 78px; }
+  .step .d { font-size: 16px; color: #D5D5DE; }
+  .step code { font-family: 'JetBrains Mono', monospace; color: #F2F2F7; }
+
+  /* FOOTER */
+  footer { padding: 26px 56px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
+  footer .links { display: flex; gap: 28px; }
+  footer a { color: var(--muted); transition: color 0.15s; }
+  footer a:hover { color: var(--text); }
+
+  @media (max-width: 960px) {
+    .nav-in { padding: 16px 20px; }
+    .nav-tele { display: none; }
+    .hero { grid-template-columns: 1fr; gap: 48px; padding: 64px 20px 130px; }
+    h1 { font-size: 64px; }
+    #ascii { left: 20px; }
+    section { padding: 56px 20px; }
+    .gallery { grid-template-columns: 1fr; }
+    .g-cell.big figure { height: 320px; }
+    .g-cell figure { height: 220px; }
+    .row { grid-template-columns: 44px 1fr; }
+    .row .d { grid-column: 2; }
+    .join { grid-template-columns: 1fr; gap: 32px; }
+    footer { padding: 22px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap nav-in">
+  <a class="brand" href="./">
+    <img src="assets/pointpixel-logo.gif" alt="PointPixel">
+    <span>POINTPIXEL</span>
+  </a>
+  <span class="nav-tele">SRV://PLAY.POINTPIXEL.RU · JAVA 1.21</span>
+  <div class="nav-links">
+    <a href="status.html">[ STATUS ]</a>
+    <a href="https://wiki.pointpixel.ru" target="_blank" rel="noopener">[ WIKI ]</a>
+    <a href="https://shop.pointpixel.ru" target="_blank" rel="noopener">[ SHOP ]</a>
+    <a class="cta" href="https://discord.gg/VjtjduYsgX" target="_blank" rel="noopener">[ DISCORD ]</a>
+  </div>
+</div></nav>
+
+<header class="wrap hero">
+  <div>
+    <div class="label">MODE://VANILLA_SURVIVAL</div>
+    <h1>POINT<br><em>PIXEL</em></h1>
+    <p>Выживание без pay-to-win. Защита построек, живое комьюнити и мир, который растёт вместе с игроками.</p>
+    <div class="ip-row">
+      <div class="ip-chip">
+        <code>play.pointpixel.ru</code>
+        <button id="copy-btn" type="button">КОПИРОВАТЬ</button>
+      </div>
+      <span class="ip-note">CTRL+V<br>В ИГРЕ</span>
+    </div>
+  </div>
+
+  <div class="hud">
+    <i></i><i></i><i></i><i></i>
+    <div class="hud-head">
+      <span class="l">STAT://ОНЛАЙН_ЗА_7_ДНЕЙ</span>
+      <span id="live-badge" class="wait"><i class="dot"></i><span id="live-text">…</span></span>
+    </div>
+    <div class="hud-num"><b id="online-now">—</b><span>ИГРОКОВ СЕЙЧАС</span></div>
+    <div class="chart" id="chart"></div>
+    <div class="chart-days" id="chart-days"></div>
+    <div class="hud-foot"><span class="l">MAX://НЕДЕЛЯ</span><span id="peak">—</span></div>
+  </div>
+
+  <div id="ascii"></div>
+</header>
+
+<section><div class="wrap" style="padding: 0;">
+  <div class="sec-head">
+    <h2 style="margin: 0;">Кадры с сервера</h2>
+    <span class="sec-note">IMG://СКРИНШОТЫ</span>
+  </div>
+  <div class="gallery">
+    <div class="g-cell big">
+      <figure><img src="img/shot-spawn.webp" alt="Спавн сервера PointPixel" loading="lazy"></figure>
+      <span class="g-cap">CAM://01 · СПАВН</span>
+    </div>
+    <div class="g-cell">
+      <figure><img src="img/shot-builds.webp" alt="Постройки игроков" loading="lazy"></figure>
+      <span class="g-cap">CAM://02 · ПОСТРОЙКИ ИГРОКОВ</span>
+    </div>
+    <div class="g-cell">
+      <figure><div class="empty">SLOT://EMPTY · 404/</div></figure>
+      <span class="g-cap">CAM://03 · ERROR<br></span>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap" style="padding: 0;">
+  <div class="label">SYS://О_СЕРВЕРЕ</div>
+  <h2>Почему PointPixel</h2>
+  <div class="rows">
+    <div class="row"><span class="idx">[01]</span><span class="t">Чистая ванила 1.21</span><span class="d">Классическое выживание на последней версии — без модов но с интересными механиками.</span></div>
+    <div class="row"><span class="idx">[02]</span><span class="t">Без pay-to-win</span><span class="d">В магазине только косметика и привилегии, не ломающие баланс.</span></div>
+    <div class="row"><span class="idx">[03]</span><span class="t">Защита от гриферов</span><span class="d">Активная модерация и откат гриферства — постройки в безопасности.</span></div>
+    <div class="row"><span class="idx">[04]</span><span class="t">Живое комьюнити</span><span class="d">Активный Discord, совместные постройки и движ на сервере — скучать не придётся.</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap join" style="padding: 0;">
+  <div>
+    <div class="label">NET://ПОДКЛЮЧЕНИЕ</div>
+    <h2>Как зайти</h2>
+    <p>Нужна Java Edition версии 1.21 и выше.</p>
+  </div>
+  <div class="steps">
+    <div class="step"><span class="idx">EXE://01</span><span class="d">Скопируй адрес <code>play.pointpixel.ru</code> кнопкой выше</span></div>
+    <div class="step"><span class="idx">EXE://02</span><span class="d">Открой Minecraft → «Сетевая игра» → «Добавить сервер»</span></div>
+    <div class="step"><span class="idx">EXE://03</span><span class="d">Вставь адрес, подключайся — увидимся на спавне</span></div>
+  </div>
+</div></section>
+
+<footer><div class="wrap" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; width: 100%;">
+  <span>© 2021–<span id="year"></span> POINTPIXEL // PLAY.POINTPIXEL.RU</span>
+  <div class="links">
+    <a href="status.html">STATUS</a>
+    <a href="https://wiki.pointpixel.ru" target="_blank" rel="noopener">WIKI</a>
+    <a href="https://discord.gg/VjtjduYsgX" target="_blank" rel="noopener">DISCORD</a>
+    <a href="https://shop.pointpixel.ru" target="_blank" rel="noopener">SHOP</a>
+  </div>
+</div></footer>
+
+<script>
+// ============ год в футере ============
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ============ кнопка «копировать IP» ============
+var copyBtn = document.getElementById('copy-btn');
+copyBtn.addEventListener('click', function () {
+  try { navigator.clipboard.writeText('play.pointpixel.ru'); } catch (e) {}
+  copyBtn.textContent = 'СКОПИРОВАНО';
+  clearTimeout(copyBtn._t);
+  copyBtn._t = setTimeout(function () { copyBtn.textContent = 'КОПИРОВАТЬ'; }, 1600);
+});
+
+// ============ ASCII-загрузка в хиро ============
+(function () {
+  var el = document.getElementById('ascii');
+  var PHASES = ['> сервер включается', '> генерируется мир', '> проверяются файлы', '> открывается порт 25565', '> Done (30.145s)!'];
+  var start = Date.now(), t = 0, phase = 0, op = 0, iv, to;
+  var line1 = document.createElement('span'); line1.style.display = 'block';
+  var line2 = document.createElement('span'); line2.className = 'fade';
+  var line3 = document.createElement('span'); line3.style.display = 'block'; line3.style.transition = 'opacity 1.2s ease';
+  el.appendChild(line1); el.appendChild(line2); el.appendChild(line3);
+  function draw() {
+    var last = phase >= PHASES.length - 1;
+    var spin = last ? 'OK' : '|/-\\'[t % 4];
+    var dots = last ? '' : '.'.repeat(1 + (t % 3));
+    var elapsed = Date.now() - start;
+    var pct = last ? 100 : Math.min(99, Math.round(elapsed / 14000 * 100));
+    var filled = Math.round(pct / 100 * 18);
+    line1.textContent = 'BOOT://POINTPIXEL_CORE v1.21 ' + spin;
+    line2.textContent = PHASES[phase] + dots;
+    line2.style.opacity = op;
+    line3.textContent = '> загрузка ......... [' + '#'.repeat(filled) + '.'.repeat(18 - filled) + '] ' + String(pct).padStart(3, ' ') + '%';
+  }
+  function showPhase(i) {
+    phase = i; op = 0; draw();
+    to = setTimeout(function () {
+      op = 1; draw();
+      if (i >= PHASES.length - 1) {
+        clearInterval(iv); draw();
+        setTimeout(function () { line3.style.opacity = 0; }, 7000); // fade только строки загрузки через 7с после Done
+        return;
+      }
+      to = setTimeout(function () {
+        op = 0; draw();
+        to = setTimeout(function () { showPhase(i + 1); }, 450);
+      }, 3000);
+    }, 60);
+  }
+  iv = setInterval(function () { t++; draw(); }, 150);
+  showPhase(0);
+})();
+
+// ============ живой онлайн (публичные API, без бэкенда) ============
+(function () {
+  var numEl = document.getElementById('online-now');
+  var badge = document.getElementById('live-badge');
+  function ok(online, players) {
+    var text = document.getElementById('live-text');
+    badge.classList.remove('wait');
+    if (online) { numEl.textContent = players; text.textContent = 'LIVE'; badge.classList.remove('off'); }
+    else { numEl.textContent = '0'; text.textContent = 'OFFLINE'; badge.classList.add('off'); }
+  }
+  fetch('https://api.mcsrvstat.us/3/play.pointpixel.ru')
+    .then(function (r) { return r.json(); })
+    .then(function (d) { ok(d.online, d.players ? d.players.online : 0); })
+    .catch(function () {
+      fetch('https://api.mcstatus.io/v2/status/java/play.pointpixel.ru')
+        .then(function (r) { return r.json(); })
+        .then(function (d) { ok(d.online, d.players ? d.players.online : 0); })
+        .catch(function () { numEl.textContent = '—'; document.getElementById('live-text').textContent = 'N/A'; });
+    });
+})();
+
+// ============ график за 7 дней ============
+// По умолчанию — демо-данные. Чтобы показывать реальные, положи рядом файл
+// stats7d.json вида: [86,102,94,131,148,173,156]  (7 чисел, от старого к новому)
+(function () {
+  var DEMO = [0, 1, 0, 0, 0, 0, 2];
+  function render(values) {
+    var chart = document.getElementById('chart');
+    var daysEl = document.getElementById('chart-days');
+    var max = Math.max.apply(null, values);
+    var names = [];
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(); d.setDate(d.getDate() - i);
+      names.push(d.toLocaleDateString('ru-RU', { weekday: 'short' }));
+    }
+    chart.innerHTML = ''; daysEl.innerHTML = '';
+    var peak = 0, peakDay = '';
+    values.forEach(function (v, i) {
+      var bar = document.createElement('span');
+      var frac = v / max;
+      bar.style.height = Math.round(10 + frac * 100) + 'px';
+      bar.style.background = i === values.length - 1 ? 'var(--accent)' : 'rgba(63,185,80,' + (0.25 + frac * 0.5).toFixed(2) + ')';
+      if (i === values.length - 1) bar.style.boxShadow = '0 0 20px rgba(63,185,80,0.45)';
+      bar.title = names[i] + ' — ' + v;
+      chart.appendChild(bar);
+      var lab = document.createElement('span'); lab.textContent = names[i]; daysEl.appendChild(lab);
+      if (v > peak) { peak = v; peakDay = names[i]; }
+    });
+    document.getElementById('peak').textContent = peak + ' · ' + peakDay.toUpperCase();
+  }
+  fetch('stats7d.json')
+    .then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .then(function (d) { render(Array.isArray(d) ? d : d.values); })
+    .catch(function () { render(DEMO); });
+})();
+</script>
+</body>
+</html>
