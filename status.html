@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #3FB950; --bg: #0A0A0E; --panel: rgba(17,17,24,0.9); --line: #1B1B23; --text: #ECECF1; --muted: #9A9AA8; --dim: #55555F; --green: #3FB950; --yellow: #D29922; --red: #F85149; }
+  :root { --accent: #3FB950; --bg: #0A0A0E; --panel: rgba(17,17,24,0.9); --line: #1B1B23; --text: #ECECF1; --muted: #9A9AA8; --dim: #7E7E8C; --green: #3FB950; --yellow: #D29922; --red: #F85149; }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
@@ -28,7 +28,7 @@
   .brand img { height: 34px; width: auto; display: block; }
   .brand span { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.14em; }
   .brand span i { font-style: normal; color: var(--dim); }
-  .nav-tele { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--dim); }
+  .nav-tele { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: #8B8B98; }
   .nav-links { display: flex; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.08em; }
   .nav-links a { color: #B8B8C4; padding: 8px 14px; border-radius: 8px; transition: background 0.15s, color 0.15s; }
   .nav-links a:hover { color: #fff; background: #17171F; }
@@ -48,21 +48,23 @@
   .svc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   .svc-name { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
   .svc-name b { font-size: 17px; font-weight: 700; color: var(--text); }
-  .svc-name span { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); }
+  .svc-name span { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8B8B98; }
   .svc-status { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; }
   .bars { margin-top: 18px; display: flex; gap: 3px; }
   .bars span { flex: 1; height: 34px; border-radius: 1px; }
-  .svc-foot { margin-top: 12px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
+  .svc-foot { margin-top: 12px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8B8B98; }
+  .svc-note { border: 1px dashed #2A2A36; padding: 18px 24px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; color: #8B8B98; }
+  .svc-note em { font-style: normal; color: #1370C4; }
 
   .legend { margin-top: 28px; display: flex; gap: 28px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #6E6E7C; }
   .legend span { display: flex; align-items: center; gap: 8px; }
   .legend b { width: 10px; height: 10px; display: inline-block; }
 
   .howto { margin-top: 56px; border: 1px dashed #2A2A36; padding: 22px 26px; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; color: #6E6E7C; }
-  .howto em { font-style: normal; color: var(--accent); }
+  .howto em { font-style: normal; color: #13704; }
   .howto code { color: var(--muted); }
 
-  footer { padding: 26px 56px; border-top: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: var(--dim); }
+  footer { padding: 26px 56px; border-top: 1px solid var(--line); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #8B8B98; }
   footer .in { max-width: 1360px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
   footer .links { display: flex; gap: 28px; }
   footer a { color: var(--muted); transition: color 0.15s; }
@@ -132,10 +134,19 @@
 // (cron, см. README.txt). Пока файла нет — демо-данные ниже.
 // ================================================================
 var DEMO = [
-  { name: 'Survival', host: 'play.pointpixel.ru:25565', status: 'ok', uptime: '99.97', down: [],   degraded: [61] },
-  { name: 'Wiki',     host: 'wiki.pointpixel.ru',       status: 'ok', uptime: '99.90', down: [34], degraded: [35] },
-  { name: 'Магазин',  host: 'shop.pointpixel.ru',       status: 'ok', uptime: '99.95', down: [],   degraded: [12, 70] },
-  { name: 'Discord',  host: 'discord.gg/VjtjduYsgX',    status: 'ok', uptime: '99.80', down: [55], degraded: [54, 56] },
+  { name: 'Прокси',   host: 'play.pointpixel.ru',           status: 'ok',   uptime: '99.97', down: [],   degraded: [61] },
+  { name: 'Hub',      host: 'hub.pointpixel.ru:25584',      status: 'ok',   uptime: '99.95', down: [],   degraded: [12, 70] },
+  { name: 'Survival', host: 'survival.pointpixel.ru:25661', status: 'ok',   uptime: '99.90', down: [34], degraded: [35] },
+  { name: 'Creative', host: 'creative.pointpixel.ru:25665', status: 'ok',   uptime: '99.92', down: [],   degraded: [48] },
+  { name: 'Fun',      host: 'fun.pointpixel.ru',            status: 'ok',   uptime: '99.88', down: [],   degraded: [22] },
+  { name: 'Магазин',  host: 'shop.pointpixel.ru',           status: 'down', uptime: '0.00',  down: [89], degraded: [] },
+];
+
+// ============ Заметки к сервисам ============
+// Показываются под карточкой сервиса. show: true — показать, false — скрыть.
+// Чтобы добавить новую — допиши строку по образцу (service = имя сервиса).
+var NOTES = [
+  { service: 'Магазин', show: true, text: 'Сайт не работает, из-за его отсутствия' },
 ];
 
 var META = {
@@ -211,6 +222,17 @@ function render(services, updated, demo) {
     foot.innerHTML = '<span>90 дней назад</span><span>аптайм ' + svc.uptime + '%</span><span>сегодня</span>';
     el.appendChild(foot);
     root.appendChild(el);
+
+    // заметка под сервисом (см. NOTES выше)
+    NOTES.forEach(function (n) {
+      if (n.service !== svc.name || !n.show) return;
+      var note = document.createElement('div');
+      note.className = 'svc-note';
+      note.innerHTML = '<em>SYS://INFO </em><span class="h"></span><br>{ <span class="t"></span> }';
+      note.querySelector('.h').textContent = svc.host;
+      note.querySelector('.t').textContent = n.text;
+      root.appendChild(note);
+    });
   });
 
   if (!demo) document.getElementById('howto').style.display = 'none';

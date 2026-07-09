@@ -24,13 +24,18 @@ $SECRET    = 'pointpixel-cron';        // смени, если дёргаешь 
 $MC_SERVER = 'play.pointpixel.ru';
 $SLOW_MS   = 4000;                     // ответ дольше — считаем «сбои»
 
-// Сервисы для мониторинга. type: 'mc' — сам игровой сервер,
-// 'http' — любой сайт/API (ok = ответ 2xx/3xx быстрее $SLOW_MS).
+// Сервисы для мониторинга.
+//   host  — ПРОСТО ТЕКСТ для отображения на странице
+//   check — РЕАЛЬНЫЙ адрес, который проверяется (не показывается).
+//           пустая строка '' = не проверять, на странице будет «НЕТ ДАННЫХ»
+//   type  — 'mc' = minecraft-сервер, 'http' = сайт (ok = 2xx/3xx быстрее $SLOW_MS)
 $SERVICES = [
-    ['id' => 'survival', 'name' => 'Survival', 'host' => 'play.pointpixel.ru:25565', 'type' => 'mc'],
-    ['id' => 'wiki',     'name' => 'Wiki',     'host' => 'wiki.pointpixel.ru',       'type' => 'http', 'url' => 'https://wiki.pointpixel.ru'],
-    ['id' => 'shop',     'name' => 'Магазин',  'host' => 'shop.pointpixel.ru',       'type' => 'http', 'url' => 'https://shop.pointpixel.ru'],
-    ['id' => 'discord',  'name' => 'Discord',  'host' => 'discord.gg/VjtjduYsgX',    'type' => 'http', 'url' => 'https://discord.com/api/v10/invites/VjtjduYsgX'],
+    ['id' => 'proxy',    'name' => 'Прокси',   'host' => 'play.pointpixel.ru',           'check' => 'play.pointpixel.ru',  'type' => 'mc'],
+    ['id' => 'hub',      'name' => 'Hub',      'host' => 'hub.pointpixel.ru:25584',      'check' => 'd33.joinserver.xyz:25584',  'type' => 'mc'],
+    ['id' => 'survival', 'name' => 'Survival', 'host' => 'survival.pointpixel.ru:25661', 'check' => 's16.joinserver.xyz:25661',  'type' => 'mc'],
+    ['id' => 'creative', 'name' => 'Creative', 'host' => 'creative.pointpixel.ru:25665', 'check' => 'f3.joinserver.xyz:25665',   'type' => 'mc'],
+    ['id' => 'fun',      'name' => 'Fun',      'host' => 'fun.pointpixel.ru',            'check' => '',                          'type' => 'mc'], // впиши реальный ip в check, когда появится
+    ['id' => 'shop',     'name' => 'Магазин',  'host' => 'shop.pointpixel.ru',           'check' => '', 'type' => 'http'],
 ];
 
 $DIR         = __DIR__;
@@ -103,23 +108,30 @@ if (@file_put_contents($DIR . '/.write_test', 'ok') === false) {
 }
 @unlink($DIR . '/.write_test');
 
+// проверка minecraft-сервера (с кэшем, чтобы не дёргать API дважды)
+// возвращает ['up' => true|false|null, 'online' => N]; null = API недоступны
+function mc_check($host) {
+    static $cache = [];
+    if (isset($cache[$host])) return $cache[$host];
+    $d = fetch_json('https://api.mcsrvstat.us/3/' . $host);
+    if (!is_array($d) || !isset($d['online'])) {
+        $d = fetch_json('https://api.mcstatus.io/v2/status/java/' . $host);
+    }
+    if (!is_array($d) || !isset($d['online'])) {
+        return $cache[$host] = ['up' => null, 'online' => 0];
+    }
+    $up = !empty($d['online']);
+    $online = ($up && isset($d['players']['online'])) ? (int)$d['players']['online'] : 0;
+    return $cache[$host] = ['up' => $up, 'online' => $online];
+}
+
 $today = date('Y-m-d');
 
 // ================================================================
 // 1. Онлайн игроков (для графика на главной)
 // ================================================================
-$mc_up = null; $online = 0;
-$d = fetch_json('https://api.mcsrvstat.us/3/' . $MC_SERVER);
-if (is_array($d) && isset($d['online'])) {
-    $mc_up  = !empty($d['online']);
-    $online = ($mc_up && isset($d['players']['online'])) ? (int)$d['players']['online'] : 0;
-} else {
-    $d = fetch_json('https://api.mcstatus.io/v2/status/java/' . $MC_SERVER);
-    if (is_array($d) && isset($d['online'])) {
-        $mc_up  = !empty($d['online']);
-        $online = ($mc_up && isset($d['players']['online'])) ? (int)$d['players']['online'] : 0;
-    }
-}
+$mc = mc_check($MC_SERVER);
+$mc_up = $mc['up']; $online = $mc['online'];
 
 $hist = load_json($STATS_HIST);
 $hist[$today] = max($online, isset($hist[$today]) ? (int)$hist[$today] : 0);
@@ -141,11 +153,15 @@ $mon = load_json($MON_HIST);
 $current = [];
 
 foreach ($SERVICES as $svc) {
-    if ($svc['type'] === 'mc') {
+    $chk = isset($svc['check']) ? $svc['check'] : $svc['host'];
+    if ($chk === '') {
+        $st = null; // проверка выключена — на странице будет «НЕТ ДАННЫХ»
+    } elseif ($svc['type'] === 'mc') {
         // оба API недоступны → не знаем, пропускаем замер (nodata)
-        $st = ($mc_up === null) ? null : ($mc_up ? 'ok' : 'down');
+        $r  = mc_check($chk);
+        $st = ($r['up'] === null) ? null : ($r['up'] ? 'ok' : 'down');
     } else {
-        $st = http_check($svc['url'], $SLOW_MS);
+        $st = http_check($chk, $SLOW_MS);
     }
     $current[$svc['id']] = $st;
     if ($st === null) continue;
