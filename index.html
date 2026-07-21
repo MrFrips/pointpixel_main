@@ -236,16 +236,24 @@
   </div>
   <div class="gallery">
     <div class="g-cell big">
-      <figure><img src="img/shot-spawn.webp" alt="Спавн сервера PointPixel" loading="lazy"></figure>
+      <figure><img src="img/spawn.webp" alt="Спавн сервера PointPixel" loading="lazy"></figure>
       <span class="g-cap">CAM://01 · СПАВН</span>
     </div>
     <div class="g-cell">
-      <figure><img src="img/shot-builds.webp" alt="Постройки игроков" loading="lazy"></figure>
-      <span class="g-cap">CAM://02 · ПОСТРОЙКИ ИГРОКОВ</span>
+      <figure><div class="empty">SLOT://EMPTY · 404/</div></figure>
+      <span class="g-cap">CAM://02 · ERROR</span>
     </div>
     <div class="g-cell">
       <figure><div class="empty">SLOT://EMPTY · 404/</div></figure>
       <span class="g-cap">CAM://03 · ERROR<br></span>
+    </div>
+    <div class="g-cell">
+      <figure><div class="empty">SLOT://EMPTY · 404/</div></figure>
+      <span class="g-cap">CAM://04 · ERROR<br></span>
+    </div>
+    <div class="g-cell">
+      <figure><div class="empty">SLOT://EMPTY · 404/</div></figure>
+      <span class="g-cap">CAM://05 · ERROR<br></span>
     </div>
   </div>
 </div></section>
@@ -287,7 +295,7 @@
 </div></footer>
 
 <script>
-// ============ год в футере ============
+// ============ год в footer ============
 document.getElementById('year').textContent = new Date().getFullYear();
 
 // ============ MODE:// — новое слово выходит сверху, вытесняя старое вниз ============
@@ -307,7 +315,7 @@ document.getElementById('year').textContent = new Date().getFullYear();
     var old = cur;
     old.className = 'w leave';                 // старое уезжает вниз
     cur = document.createElement('span');
-    cur.className = 'w enter';                 // новое заезжает сверху одновременно
+    cur.className = 'w enter';                 // новое заезжает сверху
     cur.textContent = WORDS[idx];
     el.appendChild(cur);
     setTimeout(function () { old.remove(); }, 600);

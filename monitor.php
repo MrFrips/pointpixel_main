@@ -34,7 +34,7 @@ $SERVICES = [
     ['id' => 'hub',      'name' => 'Hub',      'host' => 'hub.pointpixel.ru:25584',      'check' => 'd33.joinserver.xyz:25584',  'type' => 'mc'],
     ['id' => 'survival', 'name' => 'Survival', 'host' => 'survival.pointpixel.ru:25661', 'check' => 's16.joinserver.xyz:25661',  'type' => 'mc'],
     ['id' => 'creative', 'name' => 'Creative', 'host' => 'creative.pointpixel.ru:25665', 'check' => 'f3.joinserver.xyz:25665',   'type' => 'mc'],
-    ['id' => 'fun',      'name' => 'Fun',      'host' => 'fun.pointpixel.ru',            'check' => '',                          'type' => 'mc'], // впиши реальный ip в check, когда появится
+    ['id' => 'fun',      'name' => 'PixelFun', 'host' => 'fun.pointpixel.ru',            'check' => '',                          'type' => 'mc'], // впиши реальный ip в check, когда появится
     ['id' => 'shop',     'name' => 'Магазин',  'host' => 'shop.pointpixel.ru',           'check' => '', 'type' => 'http'],
 ];
 
